@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>코인 데이터</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #ffffff;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #f1f1f1;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .pagination a {
+            padding: 8px 16px;
+            margin: 0 4px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .pagination a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>코인 데이터</h1>
+
+    <p>총 코인 데이터: {{ total_symbols }}개</p>
+
+    <table>
+        <thead>
+          <tr>
+            <th>코인 이름</th>
+            <th>상장일</th>
+            <th>최저가 (All Time)</th>
+            <th>최고가 (2023 이전)</th>
+            <th>최저가 (2023 이후)</th>
+            <th>최고가 (2023 이후)</th>
+            <th>현재가</th>
+            <th>시가총액</th>
+            <th>시가총액 순위</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for coin in data %}
+          <tr>
+            <td>{{ coin.symbol }}</td>
+            <td>{{ coin.listing_date }}</td>
+            <td>{{ coin.lowest_price_all_time }}</td>
+            <td>{{ coin.highest_price_pre_2023 }}</td>
+            <td>{{ coin.lowest_price_post_2023 }}</td>
+            <td>{{ coin.highest_price_post_2023 }}</td>
+            <td>{{ coin.current_price }}</td>
+            <td>{{ coin.market_cap }}</td>
+            <td>{{ loop.index }}</td>  <!-- 시가총액 순위 -->
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      
+
+    <div class="pagination">
+        {% for page_num in range(1, total_pages + 1) %}
+            <a href="?page={{ page_num }}&sort_by={{ sort_by }}">{{ page_num }}</a>
+        {% endfor %}
+    </div>
+
+</body>
+</html>
