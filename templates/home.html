@@ -1,96 +1,106 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>코인 데이터</title>
+    <title>Coin Metrics</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f9;
+        }
+        .table-container {
+            max-width: 100%;
+            overflow-x: auto;
+            margin-bottom: 20px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
-            background-color: #ffffff;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
+            font-size: 12px;
         }
         th, td {
-            padding: 12px;
+            padding: 8px;
+            border: 1px solid #ddd;
             text-align: center;
         }
-        th {
-            background-color: #f1f1f1;
+        .search-box {
+            margin-bottom: 20px;
         }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        .pagination {
+        .pagination ul {
+            list-style: none;
             display: flex;
             justify-content: center;
-            margin-top: 20px;
         }
-        .pagination a {
-            padding: 8px 16px;
-            margin: 0 4px;
-            background-color: #007bff;
-            color: white;
+        .pagination li {
+            margin: 0 5px;
+        }
+        .pagination li a {
             text-decoration: none;
-            border-radius: 5px;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
         }
-        .pagination a:hover {
-            background-color: #0056b3;
+        .pagination li a.disabled {
+            color: gray;
+            cursor: not-allowed;
         }
     </style>
 </head>
 <body>
-    <h1>코인 데이터</h1>
+    <h1>Coin Metrics Comparison</h1>
 
-    <p>총 코인 데이터: {{ total_symbols }}개</p>
-
-    <table>
-        <thead>
-          <tr>
-            <th>코인 이름</th>
-            <th>상장일</th>
-            <th>최저가 (All Time)</th>
-            <th>최고가 (2023 이전)</th>
-            <th>최저가 (2023 이후)</th>
-            <th>최고가 (2023 이후)</th>
-            <th>현재가</th>
-            <th>시가총액</th>
-            <th>시가총액 순위</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for coin in data %}
-          <tr>
-            <td>{{ coin.symbol }}</td>
-            <td>{{ coin.listing_date }}</td>
-            <td>{{ coin.lowest_price_all_time }}</td>
-            <td>{{ coin.highest_price_pre_2023 }}</td>
-            <td>{{ coin.lowest_price_post_2023 }}</td>
-            <td>{{ coin.highest_price_post_2023 }}</td>
-            <td>{{ coin.current_price }}</td>
-            <td>{{ coin.market_cap }}</td>
-            <td>{{ loop.index }}</td>  <!-- 시가총액 순위 -->
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      
-
-    <div class="pagination">
-        {% for page_num in range(1, total_pages + 1) %}
-            <a href="?page={{ page_num }}&sort_by={{ sort_by }}">{{ page_num }}</a>
-        {% endfor %}
+    <div class="search-box">
+        <form method="get" action="/">
+            <input type="text" name="symbol" placeholder="Search for Symbol" value="{{ request.args.get('symbol') }}">
+            <button type="submit">Search</button>
+        </form>
     </div>
 
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>비교데이터 1 (최고점 % 상승)</th>
+                    <th>비교데이터 2 (최고점 ~ 최저점 % 변화)</th>
+                    <th>비교데이터 3 (최저점 ~ 최고점 % 변화)</th>
+                    <th>비교데이터 4 (최고점 이후 최저점 % 변화)</th>
+                    <th>비교데이터 5 (현재 ~ 최저점 % 상승)</th>
+                    <th>상장시점부터 최저점</th>
+                    <th>2023년 이전 최고점</th>
+                    <th>2023년 이후 최저점</th>
+                    <th>2023년 이후 최고점</th>
+                    <th>2023년 이후 최저점 이후 최고점</th>
+                    <th>현재</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                    <tr>
+                        <td>{{ row.symbol }}</td>
+                        <td>{{ row.percentage_increase_pre_2023 if row.percentage_increase_pre_2023 is not none else 'N/A' }}%</td>
+                        <td>{{ row.percentage_decrease_post_2023 if row.percentage_decrease_post_2023 is not none else 'N/A' }}%</td>
+                        <td>{{ row.percentage_increase_post_2023 if row.percentage_increase_post_2023 is not none else 'N/A' }}%</td>
+                        <td>{{ row.percentage_decrease_post_2024 if row.percentage_decrease_post_2024 is not none else 'N/A' }}%</td>
+                        <td>{{ row.percentage_increase_current if row.percentage_increase_current is not none else 'N/A' }}%</td>
+                        <td>{{ row.lowest_price_all_time if row.lowest_price_all_time is not none else 'N/A' }}</td>
+                        <td>{{ row.highest_price_pre_2023 if row.highest_price_pre_2023 is not none else 'N/A' }}</td>
+                        <td>{{ row.lowest_price_post_2023 if row.lowest_price_post_2023 is not none else 'N/A' }}</td>
+                        <td>{{ row.highest_price_post_2023 if row.highest_price_post_2023 is not none else 'N/A' }}</td>
+                        <td>{{ row.lowest_price_post_2023_after_D if row.lowest_price_post_2023_after_D is not none else 'N/A' }}</td>
+                        <td>{{ row.current_price if row.current_price is not none else 'N/A' }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination">
+        <ul>
+            <li><a href="?page=1">첫 페이지</a></li>
+            <li><a href="?page={{ current_page - 1 }}" {% if current_page == 1 %} class="disabled" {% endif %}>이전</a></li>
+            <li><a href="?page={{ current_page + 1 }}" {% if current_page == total_pages %} class="disabled" {% endif %}>다음</a></li>
+            <li><a href="?page={{ total_pages }}">마지막 페이지</a></li>
+        </ul>
+    </div>
 </body>
 </html>
