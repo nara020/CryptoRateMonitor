@@ -60,16 +60,16 @@
             <thead>
                 <tr>
                     <th>Symbol</th>
-                    <th>비교데이터 1 (최고점 % 상승)</th>
-                    <th>비교데이터 2 (최고점 ~ 최저점 % 변화)</th>
-                    <th>비교데이터 3 (최저점 ~ 최고점 % 변화)</th>
-                    <th>비교데이터 4 (최고점 이후 최저점 % 변화)</th>
-                    <th>비교데이터 5 (현재 ~ 최저점 % 상승)</th>
-                    <th>상장시점부터 최저점</th>
+                    <th>2023년 이전 최저점 ~ 이후 최고점 %)</th>
+                    <th>2023년 이전 최고점 ~ 이후 최저점 %)</th>
+                    <th>2023년 이후 최저점 ~ 이후 최고점 %)</th>
+                    <th>2023년 이후 최고점 ~ 이후 최저점 %)</th>
+                    <th>최근 최저점 ~ 현재 %</th>
+                    <th>2023년 이전 최저점</th>
                     <th>2023년 이전 최고점</th>
                     <th>2023년 이후 최저점</th>
                     <th>2023년 이후 최고점</th>
-                    <th>2023년 이후 최저점 이후 최고점</th>
+                    <th>최근 최저점 이후 최고점</th>
                     <th>현재</th>
                 </tr>
             </thead>
@@ -82,7 +82,7 @@
                         <td>{{ row.percentage_increase_post_2023 if row.percentage_increase_post_2023 is not none else 'N/A' }}%</td>
                         <td>{{ row.percentage_decrease_post_2024 if row.percentage_decrease_post_2024 is not none else 'N/A' }}%</td>
                         <td>{{ row.percentage_increase_current if row.percentage_increase_current is not none else 'N/A' }}%</td>
-                        <td>{{ row.lowest_price_all_time if row.lowest_price_all_time is not none else 'N/A' }}</td>
+                        <td>{{ row.lowest_price_pre_2023 if row.lowest_price_all_time is not none else 'N/A' }}</td>
                         <td>{{ row.highest_price_pre_2023 if row.highest_price_pre_2023 is not none else 'N/A' }}</td>
                         <td>{{ row.lowest_price_post_2023 if row.lowest_price_post_2023 is not none else 'N/A' }}</td>
                         <td>{{ row.highest_price_post_2023 if row.highest_price_post_2023 is not none else 'N/A' }}</td>
