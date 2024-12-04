@@ -26,6 +26,9 @@
         .search-box {
             margin-bottom: 20px;
         }
+        .filter-box {
+            margin-bottom: 20px;
+        }
         .pagination ul {
             list-style: none;
             display: flex;
@@ -43,10 +46,13 @@
             color: gray;
             cursor: not-allowed;
         }
+        .pagination li a.active {
+            background-color: #ddd;
+        }
     </style>
 </head>
 <body>
-    <h1>Coin Metrics Comparison</h1>
+    <h1>시총 100위 내, 일주일간 일봉 10일선을 찌르지않고, 2024년 3월 고점 이후 최저점 갱신을 하지 않은 코인 리스트</h1>
 
     <div class="search-box">
         <form method="get" action="/">
@@ -55,15 +61,22 @@
         </form>
     </div>
 
+    <div class="filter-box">
+        <form method="get" action="/">
+            <button type="submit" name="filter" value="ma">최근 1주일간 일봉 MA 10일선 지켜준 것만 보기</button>
+            <button type="submit" name="filter" value="false">전체 보기</button>
+        </form>
+    </div>
+
     <div class="table-container">
         <table>
             <thead>
                 <tr>
                     <th>Symbol</th>
-                    <th>2023년 이전 최저점 ~ 이후 최고점 %)</th>
-                    <th>2023년 이전 최고점 ~ 이후 최저점 %)</th>
-                    <th>2023년 이후 최저점 ~ 이후 최고점 %)</th>
-                    <th>2023년 이후 최고점 ~ 이후 최저점 %)</th>
+                    <th>2023년 이전 최저점 ~ 이후 최고점 %</th>
+                    <th>2023년 이전 최고점 ~ 이후 최저점 %</th>
+                    <th>2023년 이후 최저점 ~ 이후 최고점 %</th>
+                    <th>2023년 이후 최고점 ~ 이후 최저점 %</th>
                     <th>최근 최저점 ~ 현재 %</th>
                     <th>2023년 이전 최저점</th>
                     <th>2023년 이전 최고점</th>
@@ -82,7 +95,7 @@
                         <td>{{ row.percentage_increase_post_2023 if row.percentage_increase_post_2023 is not none else 'N/A' }}%</td>
                         <td>{{ row.percentage_decrease_post_2024 if row.percentage_decrease_post_2024 is not none else 'N/A' }}%</td>
                         <td>{{ row.percentage_increase_current if row.percentage_increase_current is not none else 'N/A' }}%</td>
-                        <td>{{ row.lowest_price_pre_2023 if row.lowest_price_all_time is not none else 'N/A' }}</td>
+                        <td>{{ row.lowest_price_pre_2023 if row.lowest_price_pre_2023 is not none else 'N/A' }}</td>
                         <td>{{ row.highest_price_pre_2023 if row.highest_price_pre_2023 is not none else 'N/A' }}</td>
                         <td>{{ row.lowest_price_post_2023 if row.lowest_price_post_2023 is not none else 'N/A' }}</td>
                         <td>{{ row.highest_price_post_2023 if row.highest_price_post_2023 is not none else 'N/A' }}</td>
@@ -96,10 +109,13 @@
 
     <div class="pagination">
         <ul>
-            <li><a href="?page=1">첫 페이지</a></li>
-            <li><a href="?page={{ current_page - 1 }}" {% if current_page == 1 %} class="disabled" {% endif %}>이전</a></li>
-            <li><a href="?page={{ current_page + 1 }}" {% if current_page == total_pages %} class="disabled" {% endif %}>다음</a></li>
-            <li><a href="?page={{ total_pages }}">마지막 페이지</a></li>
+            <li><a href="?page=1&filter={{ filter_criteria }}" class="{% if current_page == 1 %}disabled{% endif %}">첫 페이지</a></li>
+            <li><a href="?page={{ current_page - 1 }}&filter={{ filter_criteria }}" class="{% if current_page == 1 %}disabled{% endif %}">이전</a></li>
+            {% for page_num in page_numbers %}
+                <li><a href="?page={{ page_num }}&filter={{ filter_criteria }}" class="{% if page_num == current_page %}active{% endif %}">{{ page_num }}</a></li>
+            {% endfor %}
+            <li><a href="?page={{ current_page + 1 }}&filter={{ filter_criteria }}" class="{% if current_page == total_pages %}disabled{% endif %}">다음</a></li>
+            <li><a href="?page={{ total_pages }}&filter={{ filter_criteria }}" class="{% if current_page == total_pages %}disabled{% endif %}">마지막</a></li>
         </ul>
     </div>
 </body>
